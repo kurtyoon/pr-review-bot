@@ -184,24 +184,21 @@ class ReviewChain:
     def _set_up_chains(self):
 
         self.chains['change_analysis'] = (
-            RunnablePassthrough() | 
-            self.prompts['change_analysis'] | 
-            self.llm | 
-            (lambda x: {"change_analysis": x.content})
+            RunnablePassthrough.assign(
+                change_analysis=lambda x: self.prompts['change_analysis'].invoke(x) | self.llm
+            )
         )
 
         self.chains['code_quality'] = (
-            RunnablePassthrough() | 
-            self.prompts['code_quality'] | 
-            self.llm | 
-            (lambda x: {"code_quality_review": x.content})
+            RunnablePassthrough.assign(
+                code_quality_review=lambda x: self.prompts['code_quality'].invoke(x) | self.llm
+            )
         )
 
         self.chains['summary'] = (
-            RunnablePassthrough() | 
-            self.prompts['summary'] | 
-            self.llm | 
-            (lambda x: {"review_summary": x.content})
+            RunnablePassthrough.assign(
+                review_summary=lambda x: self.prompts['summary'].invoke(x) | self.llm
+            )
         )
 
         self.chains['overall_review'] = (
