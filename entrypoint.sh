@@ -24,7 +24,7 @@ elif [ "$LLM_PROVIDER" = "google" ] && [ -z "$GOOGLE_API_KEY" ]; then
     exit 1
 fi
 
-python main.py \
+python /app/main.py \
   --pr_number "$PR_NUMBER" \
   --github_token "$GITHUB_TOKEN" \
   --repo_name "$GITHUB_REPOSITORY" \
