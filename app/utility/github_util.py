@@ -65,8 +65,8 @@ class GithubUtil:
         return file_diffs
     
     @staticmethod
-    def post_review_comment(github: Github, repo_name: str, pr_number: int, comment: str, path: str, position: int) -> None:
+    def post_review_comment(github: Github, repo_name: str, pr_number: int, comment: str) -> None:
         repo = github.get_repo(repo_name)
         pr = repo.get_pull(pr_number)
 
-        pr.create_review_comment(comment, path, position)
+        pr.create_issue_comment(comment)

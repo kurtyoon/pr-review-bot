@@ -83,7 +83,7 @@ def main():
         logger.info(f"PR #{args.pr_number} review completed")
         GithubUtil.post_review_comment(github, args.repo_name, args.pr_number, markdown_result)
 
-        logger.info(f"PR #{args.pr} review completed")
+        logger.info(f"PR #{args.pr_number} review completed")
 
     except Exception as e:
         logger.error(f"Error: {e}", exc_info=True)
