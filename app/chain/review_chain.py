@@ -1,5 +1,5 @@
 from app.config.config import Config
-from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.chains import SequentialChain, LLMChain
 from app.factory.llm_factory import LLMFactory
 from typing import Dict, Any
