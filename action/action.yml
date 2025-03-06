@@ -1,0 +1,26 @@
+name: "PR Review Bot"
+description: "Automatically review pull requests using OpenAI API"
+
+inputs:
+  github_token:
+    description: "GitHub Token to access PR files and comments"
+    required: true
+  openai_api_key:
+    description: "OpenAI API Key"
+    required: true
+  pr_number:
+    description: "Pull Request Number"
+    required: true
+  repo_name:
+    description: "GitHub Repository Name (owner/repo)"
+    required: false
+    default: ${{ github.repository }}
+
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  env:
+    GITHUB_TOKEN: ${{ inputs.github_token }}
+    OPENAI_API_KEY: ${{ inputs.openai_api_key }}
+    PR_NUMBER: ${{ inputs.pr_number }}
+    GITHUB_REPOSITORY: ${{ inputs.repo_name }}
