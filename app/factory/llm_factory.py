@@ -1,4 +1,4 @@
-from langchain_models.core.language_models.base import BaseLanguageModel
+from langchain_core.language_models.base import BaseLanguageModel
 from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 
