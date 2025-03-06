@@ -18,10 +18,22 @@ def main():
     parser = argparse.ArgumentParser(description="Code Review Bot 🤖")
     parser.add_argument('--pr_number', type=int, default=os.getenv('PR_NUMBER'))
     parser.add_argument('--github_token', default=os.getenv("GITHUB_TOKEN"))
-    parser.add_argument('--openai_api_key', default=os.getenv("OPENAI_API_KEY"))
     parser.add_argument('--repo_name', default=os.getenv("GITHUB_REPOSITORY"))
+    
+    # LLM 제공자 선택 옵션 추가
+    parser.add_argument('--llm_provider', default=os.getenv("LLM_PROVIDER", "openai"),
+                      choices=["openai", "google"],
+                      help="사용할 LLM 제공자 (openai, google)")
+    
+    # 다양한 API 키 옵션
+    parser.add_argument('--openai_api_key', default=os.getenv("OPENAI_API_KEY"))
+    parser.add_argument('--google_api_key', default=os.getenv("GOOGLE_API_KEY"))
+ 
+    # 모델 선택 옵션
+    parser.add_argument('--model', default=os.getenv("MODEL_NAME"))
     args = parser.parse_args()
 
+    # 필수 파라미터 검사
     if not args.github_token:
         logger.error("GitHub 토큰이 필요합니다.")
         sys.exit(1)
@@ -33,12 +45,24 @@ def main():
     if not args.repo_name:
         logger.error("GitHub 레포지토리 이름이 필요합니다.")
         sys.exit(1)
-        
-    if not args.openai_api_key:
+    
+    # 선택된 LLM 제공자에 따른 API 키 검증
+    if args.llm_provider == "openai" and not args.openai_api_key:
         logger.error("OpenAI API 키가 필요합니다.")
         sys.exit(1)
+    elif args.llm_provider == "google" and not args.google_api_key:
+        logger.error("Google API 키가 필요합니다.")
+        sys.exit(1)
 
-    os.environ["OPENAI_API_KEY"] = args.openai_api_key
+    # 환경 변수 설정
+    os.environ["LLM_PROVIDER"] = args.llm_provider
+    if args.model:
+        os.environ["MODEL_NAME"] = args.model
+        
+    if args.openai_api_key:
+        os.environ["OPENAI_API_KEY"] = args.openai_api_key
+    if args.google_api_key:
+        os.environ["GOOGLE_API_KEY"] = args.google_api_key
 
     try:
 

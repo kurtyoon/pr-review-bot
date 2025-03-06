@@ -1,7 +1,7 @@
 from app.config.config import Config
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
-from langchain_openai import ChatOpenAI
 from langchain.chains import SequentialChain, LLMChain
+from app.factory.llm_factory import LLMFactory
 from typing import Dict, Any
 
 class ReviewChain:
@@ -13,17 +13,7 @@ class ReviewChain:
         self.prompts = {}
 
     def ready(self):
-        model = self.config.get("model", "gpt-4o-mini")
-        openai_api_key = self.config.get("open_api_key")
-
-        if not openai_api_key:
-            raise ValueError("OPENAI_API_KEY is not set")
-
-        self.llm = ChatOpenAI(
-            model=model,
-            temperature=self.config.get("temperature", 0.3),
-            openai_api_key=openai_api_key
-        )
+        self.llm = LLMFactory.create_llm(self.config)
 
         self._set_up_prompts()
         self._set_up_chains()

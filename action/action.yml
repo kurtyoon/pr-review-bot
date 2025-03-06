@@ -1,13 +1,11 @@
 name: "PR Review Bot"
-description: "Automatically review pull requests using OpenAI API"
+description: "Automatically review pull requests using AI"
 
 inputs:
   github_token:
     description: "GitHub Token to access PR files and comments"
     required: true
-  openai_api_key:
-    description: "OpenAI API Key"
-    required: true
+
   pr_number:
     description: "Pull Request Number"
     required: false
@@ -18,11 +16,31 @@ inputs:
     required: false
     default: ${{ github.repository }}
 
+  llm_provider:
+    description: "LLM Provider (openai, google, anthropic)"
+    required: false
+    default: "openai"
+
+  model:
+    description: "Model name to use (depends on the selected provider)"
+    required: false
+
+  openai_api_key:
+    description: "OpenAI API Key (required if llm_provider is openai)"
+    required: false
+
+  google_api_key:
+    description: "Google API Key (required if llm_provider is google)"
+    required: false
+
 runs:
   using: "docker"
   image: "Dockerfile"
   env:
     GITHUB_TOKEN: ${{ inputs.github_token }}
-    OPENAI_API_KEY: ${{ inputs.openai_api_key }}
     PR_NUMBER: ${{ inputs.pr_number }}
     GITHUB_REPOSITORY: ${{ inputs.repo_name }}
+    LLM_PROVIDER: ${{ inputs.llm_provider }}
+    MODEL_NAME: ${{ inputs.model }}
+    OPENAI_API_KEY: ${{ inputs.openai_api_key }}
+    GOOGLE_API_KEY: ${{ inputs.google_api_key }}
