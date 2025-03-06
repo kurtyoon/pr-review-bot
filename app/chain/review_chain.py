@@ -1,6 +1,6 @@
 from app.config.config import Config
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
-from langchain.chains import SequentialChain, LLMChain
+from langchain_core.runnables import RunnablePassthrough
 from app.factory.llm_factory import LLMFactory
 from typing import Dict, Any
 
@@ -183,31 +183,30 @@ class ReviewChain:
 
     def _set_up_chains(self):
 
-        self.chains['change_analysis'] = LLMChain(
-            llm=self.llm,
-            prompt=self.prompts['change_analysis'],
-            output_key="change_analysis"
+        self.chains['change_analysis'] = (
+            RunnablePassthrough() | 
+            self.prompts['change_analysis'] | 
+            self.llm | 
+            (lambda x: {"change_analysis": x.content})
         )
 
-        self.chains['code_quality'] = LLMChain(
-            llm=self.llm,
-            prompt=self.prompts['code_quality'],
-            output_key="code_quality_review"
+        self.chains['code_quality'] = (
+            RunnablePassthrough() | 
+            self.prompts['code_quality'] | 
+            self.llm | 
+            (lambda x: {"code_quality_review": x.content})
         )
 
-        self.chains['summary'] = LLMChain(
-            llm=self.llm,
-            prompt=self.prompts['summary'],
-            output_key="review_summary"
+        self.chains['summary'] = (
+            RunnablePassthrough() | 
+            self.prompts['summary'] | 
+            self.llm | 
+            (lambda x: {"review_summary": x.content})
         )
 
-        self.chains['overall_review'] = SequentialChain(    
-            chains=[
-                self.chains['change_analysis'],
-                self.chains['code_quality'],
-                self.chains['summary']
-            ],
-            input_variables=["pr_title", "pr_description", "base_branch", "head_branch", "file_changes", "file_diffs"],
-            output_variables=["change_analysis", "code_quality_review", "review_summary"],
-            verbose=self.config.get("verbose", False)
+        self.chains['overall_review'] = (
+            RunnablePassthrough() | 
+            self.chains['change_analysis'] | 
+            self.chains['code_quality'] | 
+            self.chains['summary']
         )

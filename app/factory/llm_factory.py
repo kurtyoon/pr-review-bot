@@ -30,7 +30,7 @@ class LLMFactory:
         
             
             return ChatGoogleGenerativeAI(
-                model=model or "gemini-1.0-pro",
+                model=model or "gemini-1.5-flash",
                 temperature=temperature,
                 google_api_key=api_key
             )
